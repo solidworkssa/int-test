@@ -1,0 +1,40 @@
+{
+  "name": "@winsznx/saturnsdk",
+  "version": "0.1.0",
+  "description": "SDK for Saturn Optimizer Stacks BTCFi Vaults",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "test": "vitest run",
+    "lint": "eslint src/**/*.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "author": "winsznx <timjsohsh507@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@stacks/transactions": "^7.2.0",
+    "@stacks/network": "^7.2.0",
+    "@stacks/common": "^7.2.0",
+    "buffer": "^6.0.3"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8",
+    "@types/node": "^22.10.1",
+    "eslint": "^9.16.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/winsznx/saturnsdk.git"
+  }
+}
