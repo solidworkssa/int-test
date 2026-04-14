@@ -9,6 +9,9 @@ PACKAGES=(
   "@winsznx/stxactcli"
   "@winsznx/saturnsdk"
   "@winsznx/fundsdk"
+  "@winsznx/stx-canvas-client"
+  "@winsznx/stacks-wrapped-parser"
+  "@winsznx/stxpet-core"
 )
 
 COUNT=0
