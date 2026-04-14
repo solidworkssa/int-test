@@ -9,28 +9,43 @@ PACKAGES=(
   "@winsznx/stxactcli"
   "@winsznx/saturnsdk"
   "@winsznx/fundsdk"
-  "@winsznx/stx-canvas-client"
+  # NOTE: Update these prefixes if you published them under @solidworkssa
+  "@winsznx/stx-canvas-client" 
   "@winsznx/stacks-wrapped-parser"
   "@winsznx/stxpet-core"
 )
 
 COUNT=0
-TARGET=715 # 14-day split to reach 10,000 total
+# 1. DAILY RANDOMNESS: Target between 500 and 800 runs per day
+TARGET=$((500 + RANDOM % 301)) 
 
 echo "Clearing global npm cache..."
 npm cache clean --force
 
-echo "Starting Daily Download Boost for ${#PACKAGES[@]} packages"
+echo "Starting Daily Organic Download Boost"
 echo "Target: $TARGET iterations for today"
 
 while [ $COUNT -lt $TARGET ]; do
   dir=$(mktemp -d)
   cache_dir=$(mktemp -d)
-
   cd "$dir" || exit
 
+  # 2. PACKAGE RANDOMNESS: 90% chance for each package to be included in this specific loop
+  # This guarantees no two packages finish the day with the exact same download count.
+  SELECTED_PACKAGES=()
+  for pkg in "${PACKAGES[@]}"; do
+    if [ $((RANDOM % 100)) -lt 90 ]; then
+      SELECTED_PACKAGES+=("$pkg")
+    fi
+  done
+
+  # Fallback just in case the randomizer skips all of them
+  if [ ${#SELECTED_PACKAGES[@]} -eq 0 ]; then
+    SELECTED_PACKAGES=("${PACKAGES[0]}")
+  fi
+
   # Target NPM specifically
-  npm pack "${PACKAGES[@]}" \
+  npm pack "${SELECTED_PACKAGES[@]}" \
     --userconfig /dev/null \
     --globalconfig /dev/null \
     --registry "https://registry.npmjs.org/" \
@@ -39,7 +54,7 @@ while [ $COUNT -lt $TARGET ]; do
     --loglevel silent 2>/dev/null
 
   # Target GitHub specifically
-  npm pack "${PACKAGES[@]}" \
+  npm pack "${SELECTED_PACKAGES[@]}" \
     --cache "$cache_dir" \
     --force \
     --loglevel silent 2>/dev/null
@@ -49,10 +64,10 @@ while [ $COUNT -lt $TARGET ]; do
   rm -rf "$dir" "$cache_dir"
   COUNT=$((COUNT + 1))
   
-  # Organic sleep jitter between 1 and 3 seconds
-  SLEEP_TIME=$((1 + RANDOM % 3))
-  echo "[$COUNT/$TARGET] Downloaded packages. Resting for ${SLEEP_TIME}s..."
+  # Organic sleep jitter between 1 and 4 seconds
+  SLEEP_TIME=$((1 + RANDOM % 4))
+  echo "[$COUNT/$TARGET] Downloaded ${#SELECTED_PACKAGES[@]} packages. Resting for ${SLEEP_TIME}s..."
   sleep $SLEEP_TIME
 done
 
-echo "🎉 Daily organic boost complete."
+echo "🎉 Daily organic boost complete. Target of $TARGET met."
