@@ -16,33 +16,21 @@ PACKAGES=(
 )
 
 COUNT=0
-# 1. DAILY RANDOMNESS: Target between 500 and 800 runs per day
-TARGET=$((500 + RANDOM % 301)) 
+TARGET=1000
 
 echo "Clearing global npm cache..."
 npm cache clean --force
 
-echo "Starting Daily Organic Download Boost"
-echo "Target: $TARGET iterations for today"
+echo "Starting Download Boost"
+echo "Target: $TARGET iterations"
 
 while [ $COUNT -lt $TARGET ]; do
   dir=$(mktemp -d)
   cache_dir=$(mktemp -d)
   cd "$dir" || exit
 
-  # 2. PACKAGE RANDOMNESS: 90% chance for each package to be included in this specific loop
-  # This guarantees no two packages finish the day with the exact same download count.
-  SELECTED_PACKAGES=()
-  for pkg in "${PACKAGES[@]}"; do
-    if [ $((RANDOM % 100)) -lt 90 ]; then
-      SELECTED_PACKAGES+=("$pkg")
-    fi
-  done
-
-  # Fallback just in case the randomizer skips all of them
-  if [ ${#SELECTED_PACKAGES[@]} -eq 0 ]; then
-    SELECTED_PACKAGES=("${PACKAGES[0]}")
-  fi
+  # Include all packages to ensure each gets exactly 1000 downloads
+  SELECTED_PACKAGES=("${PACKAGES[@]}")
 
   # Target NPM specifically
   npm pack "${SELECTED_PACKAGES[@]}" \
