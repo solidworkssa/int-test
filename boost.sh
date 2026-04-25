@@ -18,6 +18,21 @@ PACKAGES=(
 COUNT=0
 TARGET=1000
 
+# Temporary packages (valid until April 30th, 2026)
+CURRENT_DATE=$(date +%Y%m%d)
+END_DATE=20260430
+
+DIVINE_TARGET=0
+EARN_TARGET=0
+
+if [ "$CURRENT_DATE" -le "$END_DATE" ]; then
+  DIVINE_TARGET=$((300 + RANDOM % 201))
+  EARN_TARGET=$((300 + RANDOM % 201))
+  echo "Temporary boost active until April 30th."
+  echo "@divinedilibe/gm-dapp target: $DIVINE_TARGET"
+  echo "@earnwithalee/stx-contract target: $EARN_TARGET"
+fi
+
 echo "Clearing global npm cache..."
 npm cache clean --force
 
@@ -29,8 +44,17 @@ while [ $COUNT -lt $TARGET ]; do
   cache_dir=$(mktemp -d)
   cd "$dir" || exit
 
-  # Include all packages to ensure each gets exactly 1000 downloads
+  # Include all main packages to ensure each gets exactly 1000 downloads
   SELECTED_PACKAGES=("${PACKAGES[@]}")
+  
+  # Add temporary packages if they haven't reached their random targets
+  if [ $COUNT -lt $DIVINE_TARGET ]; then
+    SELECTED_PACKAGES+=("@divinedilibe/gm-dapp")
+  fi
+  
+  if [ $COUNT -lt $EARN_TARGET ]; then
+    SELECTED_PACKAGES+=("@earnwithalee/stx-contract")
+  fi
 
   # Target NPM specifically
   npm pack "${SELECTED_PACKAGES[@]}" \
