@@ -16,7 +16,11 @@ PACKAGES=(
 )
 
 COUNT=0
-TARGET=1000
+MAIN_TARGET=1000
+HIGH_TARGET=$((2300 + RANDOM % 201))
+
+# Overall target is the maximum downloads needed
+TARGET=$HIGH_TARGET
 
 # Temporary packages (valid until April 30th, 2026)
 CURRENT_DATE=$(date +%Y%m%d)
@@ -44,8 +48,23 @@ while [ $COUNT -lt $TARGET ]; do
   cache_dir=$(mktemp -d)
   cd "$dir" || exit
 
+  SELECTED_PACKAGES=()
+
   # Include all main packages to ensure each gets exactly 1000 downloads
-  SELECTED_PACKAGES=("${PACKAGES[@]}")
+  if [ $COUNT -lt $MAIN_TARGET ]; then
+    SELECTED_PACKAGES+=("${PACKAGES[@]}")
+  fi
+  
+  # High-tier packages get 2300-2500 downloads
+  if [ $COUNT -lt $HIGH_TARGET ]; then
+    SELECTED_PACKAGES+=(
+      "@winsznx/petsdk"
+      "@winsznx/streaksdk"
+      "@winsznx/klocksdk"
+      "@winsznx/wrappedsdk"
+      "@winsznx/pixsdk"
+    )
+  fi
   
   # Add temporary packages if they haven't reached their random targets
   if [ $COUNT -lt $DIVINE_TARGET ]; then
