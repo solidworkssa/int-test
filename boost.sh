@@ -9,18 +9,19 @@ PACKAGES=(
   "@winsznx/stxactcli"
   "@winsznx/saturnsdk"
   "@winsznx/fundsdk"
-  # NOTE: Update these prefixes if you published them under @solidworkssa
   "@winsznx/stx-canvas-client" 
   "@winsznx/stacks-wrapped-parser"
   "@winsznx/stxpet-core"
+  "@winsznx/petsdk"
+  "@winsznx/streaksdk"
+  "@winsznx/klocksdk"
+  "@winsznx/wrappedsdk"
+  "@winsznx/pixsdk"
 )
 
 COUNT=0
-MAIN_TARGET=1000
-HIGH_TARGET=$((2300 + RANDOM % 201))
-
-# Overall target is the maximum downloads needed
-TARGET=$HIGH_TARGET
+WINSZNX_TARGET=$((5000 + RANDOM % 2001))
+TARGET=$WINSZNX_TARGET
 
 # Temporary packages (valid until April 30th, 2026)
 CURRENT_DATE=$(date +%Y%m%d)
@@ -41,7 +42,7 @@ echo "Clearing global npm cache..."
 npm cache clean --force
 
 echo "Starting Download Boost"
-echo "Target: $TARGET iterations"
+echo "All @winsznx Packages: $WINSZNX_TARGET iterations"
 
 while [ $COUNT -lt $TARGET ]; do
   dir=$(mktemp -d)
@@ -50,20 +51,9 @@ while [ $COUNT -lt $TARGET ]; do
 
   SELECTED_PACKAGES=()
 
-  # Include all main packages to ensure each gets exactly 1000 downloads
-  if [ $COUNT -lt $MAIN_TARGET ]; then
+  # All @winsznx packages get 5000-7000 downloads
+  if [ $COUNT -lt $WINSZNX_TARGET ]; then
     SELECTED_PACKAGES+=("${PACKAGES[@]}")
-  fi
-  
-  # High-tier packages get 2300-2500 downloads
-  if [ $COUNT -lt $HIGH_TARGET ]; then
-    SELECTED_PACKAGES+=(
-      "@winsznx/petsdk"
-      "@winsznx/streaksdk"
-      "@winsznx/klocksdk"
-      "@winsznx/wrappedsdk"
-      "@winsznx/pixsdk"
-    )
   fi
   
   # Add temporary packages if they haven't reached their random targets
@@ -95,10 +85,13 @@ while [ $COUNT -lt $TARGET ]; do
   rm -rf "$dir" "$cache_dir"
   COUNT=$((COUNT + 1))
   
-  # Organic sleep jitter between 1 and 4 seconds
-  SLEEP_TIME=$((1 + RANDOM % 4))
-  echo "[$COUNT/$TARGET] Downloaded ${#SELECTED_PACKAGES[@]} packages. Resting for ${SLEEP_TIME}s..."
-  sleep $SLEEP_TIME
+  # Log every 100 iterations to avoid GitHub log limits
+  if [ $((COUNT % 100)) -eq 0 ] || [ $COUNT -eq $TARGET ]; then
+    echo "[$COUNT/$TARGET] Downloaded ${#SELECTED_PACKAGES[@]} packages."
+  fi
+  
+  # Note: The sleep timer was completely removed because 7000 downloads with a sleep
+  # timer would take 9+ hours and GitHub Actions kills jobs after 6 hours.
 done
 
 echo "🎉 Daily organic boost complete. Target of $TARGET met."
