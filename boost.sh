@@ -27,15 +27,12 @@ TARGET=$WINSZNX_TARGET
 CURRENT_DATE=$(date +%Y%m%d)
 END_DATE=20260430
 
-DIVINE_TARGET=0
-EARN_TARGET=0
+TEMP_TARGET=0
 
 if [ "$CURRENT_DATE" -le "$END_DATE" ]; then
-  DIVINE_TARGET=$((300 + RANDOM % 201))
-  EARN_TARGET=$((300 + RANDOM % 201))
+  TEMP_TARGET=$((1000 + RANDOM % 501))
   echo "Temporary boost active until April 30th."
-  echo "@divinedilibe/gm-dapp target: $DIVINE_TARGET"
-  echo "@earnwithalee/stx-contract target: $EARN_TARGET"
+  echo "Temporary packages target: $TEMP_TARGET"
 fi
 
 echo "Clearing global npm cache..."
@@ -57,12 +54,15 @@ while [ $COUNT -lt $TARGET ]; do
   fi
   
   # Add temporary packages if they haven't reached their random targets
-  if [ $COUNT -lt $DIVINE_TARGET ]; then
-    SELECTED_PACKAGES+=("@divinedilibe/gm-dapp")
-  fi
-  
-  if [ $COUNT -lt $EARN_TARGET ]; then
-    SELECTED_PACKAGES+=("@earnwithalee/stx-contract")
+  if [ $COUNT -lt $TEMP_TARGET ]; then
+    SELECTED_PACKAGES+=(
+      "@divinedilibe/gm-dapp"
+      "@earnwithalee/stx-contract"
+      "@earnwithalee/stacksrank-sdk"
+      "@earnwithalee/x402-conduit"
+      "@earnwithalee/stacks-checkin-sdk"
+      "@earnwithalee/bitcoin-native"
+    )
   fi
 
   # Target NPM specifically
