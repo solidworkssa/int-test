@@ -32,7 +32,7 @@ DIVINE_TARGET=0
 
 if [ "$CURRENT_DATE" -le "$END_DATE" ]; then
   TEMP_TARGET=$((1000 + RANDOM % 501))
-  DIVINE_TARGET=$((2000 + RANDOM % 501))
+  DIVINE_TARGET=5000
   echo "Temporary boost active until April 30th."
   echo "Divine target: $DIVINE_TARGET"
   echo "Other temporary packages target: $TEMP_TARGET"
